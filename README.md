@@ -1,3 +1,8 @@
+# Auteurs
+ - Joachim Amandine
+ - Malaise Romain
+ - Renard Baptiste
+
 # Projet INFO0009 - Base de données
 
 Ce dépôt regroupe nos deux travaux du cours INFO0009-2 Base de données. Le sujet tourne autour d'un système ferroviaire : d'abord le modéliser proprement, puis l'implémenter avec une base MySQL et une petite interface web en PHP.
