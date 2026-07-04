@@ -1,0 +1,192 @@
+DELIMITER $$
+CREATE TRIGGER IF NOT EXISTS verifier_date_exception_insert BEFORE INSERT ON exception FOR EACH ROW
+BEGIN
+  DECLARE dateDebutService DATE;
+  DECLARE dateFinService DATE;
+
+  SELECT DATE_DEBUT, DATE_FIN INTO dateDebutService, dateFinService FROM service WHERE ID = NEW.SERVICE_ID;
+  IF NEW.DATE < dateDebutService OR NEW.DATE > dateFinService THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'La date de l exception que vous voulez insérées est invalide';
+  END IF;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER IF NOT EXISTS verifier_date_exception_update BEFORE UPDATE ON exception FOR EACH ROW
+BEGIN
+  DECLARE dateDebutService DATE;
+  DECLARE dateFinService DATE;
+
+  SELECT DATE_DEBUT, DATE_FIN INTO dateDebutService, dateFinService FROM service WHERE ID = NEW.SERVICE_ID;
+  IF NEW.DATE < dateDebutService OR NEW.DATE > dateFinService THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'La date de l exception que vous voulez modifiez est invalide';
+  END IF;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER IF NOT EXISTS verifier_coordonnes_arret_insert BEFORE INSERT ON arret FOR EACH ROW
+BEGIN
+
+  IF NEW.LATITUDE NOT BETWEEN 49.5294835476 AND 51.4750237087 THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'La latitude de l arret ne correspond pas a la bounding box de la Belgique (49.5294835476-51.4750237087)';
+  END IF;
+  IF NEW.LONGITUDE NOT BETWEEN 2.51357303225 AND 6.15665815596 THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'La longitude de l arret ne correspond pas a la bounding box de la Belgique (2.51357303225-6.15665815596,)';
+  END IF;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER IF NOT EXISTS verifier_coordonnes_arret_update BEFORE UPDATE ON arret FOR EACH ROW
+BEGIN
+
+  IF NEW.LATITUDE NOT BETWEEN 49.5294835476 AND 51.4750237087 THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'La latitude de l arret ne correspond pas a la bounding box de la Belgique (49.5294835476-51.4750237087)';
+  END IF;
+  IF NEW.LONGITUDE NOT BETWEEN 2.51357303225 AND 6.15665815596 THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'La longitude de l arret ne correspond pas a la bounding box de la Belgique (2.51357303225-6.15665815596,)';
+  END IF;
+END $$
+DELIMITER ;
+
+-- Verification chaine vide a l'insert et update. On le set en NULL comme ca une erreur sur la contrainte d'intégrité se lève
+
+DELIMITER $$
+CREATE TRIGGER IF NOT EXISTS verifier_chaine_vide_agence_insert BEFORE INSERT ON agence FOR EACH ROW
+BEGIN
+  IF NEW.NOM = '' THEN
+    SET NEW.NOM = NULL;
+  END IF;
+  IF NEW.URL = '' THEN
+    SET NEW.URL = NULL;
+  END IF;
+  IF NEW.FUSEAU_HORAIRE = '' THEN
+    SET NEW.FUSEAU_HORAIRE = NULL;
+  END IF;
+  IF NEW.TELEPHONE = '' THEN
+    SET NEW.TELEPHONE = NULL;
+  END IF;
+  IF NEW.SIEGE = '' THEN
+    SET NEW.SIEGE = NULL;
+  END IF;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER IF NOT EXISTS verifier_chaine_vide_itineraire_insert BEFORE INSERT ON itineraire FOR EACH ROW
+BEGIN
+  IF NEW.NOM = '' THEN
+    SET NEW.NOM = NULL;
+  END IF;
+  IF NEW.TYPE = '' THEN
+    SET NEW.TYPE = NULL;
+  END IF;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER IF NOT EXISTS verifier_chaine_vide_service_insert BEFORE INSERT ON service FOR EACH ROW
+BEGIN
+  IF NEW.NOM = '' THEN
+    SET NEW.NOM = NULL;
+  END IF;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER IF NOT EXISTS verifier_chaine_vide_langueprincipale_insert BEFORE INSERT ON langueprincipale FOR EACH ROW
+BEGIN
+  IF NEW.LANGUE = '' THEN
+    SET NEW.LANGUE = NULL;
+  END IF;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER IF NOT EXISTS verifier_chaine_vide_trajet_insert BEFORE INSERT ON trajet FOR EACH ROW
+BEGIN
+  IF NEW.TRAJET_ID = '' THEN
+    SET NEW.TRAJET_ID = NULL;
+  END IF;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER IF NOT EXISTS verifier_chaine_vide_arret_insert BEFORE INSERT ON arret FOR EACH ROW
+BEGIN
+  IF NEW.NOM = '' THEN
+    SET NEW.NOM = NULL;
+  END IF;
+END $$
+DELIMITER ;
+
+
+DELIMITER $$
+CREATE TRIGGER IF NOT EXISTS verifier_chaine_vide_agence_update BEFORE UPDATE ON agence FOR EACH ROW
+BEGIN
+  IF NEW.NOM = '' THEN
+    SET NEW.NOM = NULL;
+  END IF;
+  IF NEW.URL = '' THEN
+    SET NEW.URL = NULL;
+  END IF;
+  IF NEW.FUSEAU_HORAIRE = '' THEN
+    SET NEW.FUSEAU_HORAIRE = NULL;
+  END IF;
+  IF NEW.TELEPHONE = '' THEN
+    SET NEW.TELEPHONE = NULL;
+  END IF;
+  IF NEW.SIEGE = '' THEN
+    SET NEW.SIEGE = NULL;
+  END IF;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER IF NOT EXISTS verifier_chaine_vide_itineraire_update BEFORE UPDATE ON itineraire FOR EACH ROW
+BEGIN
+  IF NEW.NOM = '' THEN
+    SET NEW.NOM = NULL;
+  END IF;
+  IF NEW.TYPE = '' THEN
+    SET NEW.TYPE = NULL;
+  END IF;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER IF NOT EXISTS verifier_chaine_vide_service_update BEFORE UPDATE ON service FOR EACH ROW
+BEGIN
+  IF NEW.NOM = '' THEN
+    SET NEW.NOM = NULL;
+  END IF;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER IF NOT EXISTS verifier_chaine_vide_langueprincipale_update BEFORE UPDATE ON langueprincipale FOR EACH ROW
+BEGIN
+  IF NEW.LANGUE = '' THEN
+    SET NEW.LANGUE = NULL;
+  END IF;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER IF NOT EXISTS verifier_chaine_vide_trajet_update BEFORE UPDATE ON trajet FOR EACH ROW
+BEGIN
+  IF NEW.TRAJET_ID = '' THEN
+    SET NEW.TRAJET_ID = NULL;
+  END IF;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER IF NOT EXISTS verifier_chaine_vide_arret_update BEFORE UPDATE ON arret FOR EACH ROW
+BEGIN
+  IF NEW.NOM = '' THEN
+    SET NEW.NOM = NULL;
+  END IF;
+END $$
+DELIMITER ;
